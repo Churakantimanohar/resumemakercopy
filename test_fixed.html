@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Builder - Fixed</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+    <style>
+        /* Essential styles embedded to ensure visibility */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        
+        .step-container {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #007bff;
+        }
+        
+        .step-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary, .btn-secondary {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-1px);
+        }
+        
+        .info {
+            color: #6c757d;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Resume Builder</h1>
+            <p>Create a tailored resume based on any job description</p>
+        </div>
+
+        <!-- Step 1: Job Description Analysis -->
+        <div id="step1" class="step-container">
+            <h2>🔍 Step 1: Analyze Job Description</h2>
+            <div class="form-group">
+                <label for="jobDescription">Paste the Job Description:</label>
+                <textarea id="jobDescription" placeholder="Paste the complete job description here. Include requirements, responsibilities, and preferred qualifications..." rows="8"></textarea>
+                <small class="info">The more detailed the job description, the better we can tailor your resume</small>
+            </div>
+            
+            <div class="button-group">
+                <button onclick="analyzeJobDescription()" class="btn-primary">
+                    ✨ Analyze & Continue
+                </button>
+                <button onclick="skipAnalysis()" class="btn-secondary">
+                    ➡️ Skip Analysis
+                </button>
+            </div>
+            
+            <div id="status" class="status" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Fixed Resume Builder loaded');
+        
+        // Test functions
+        function analyzeJobDescription() {
+            console.log('Analyze button clicked');
+            const jobDesc = document.getElementById('jobDescription').value.trim();
+            const status = document.getElementById('status');
+            
+            if (!jobDesc) {
+                status.className = 'status error';
+                status.innerHTML = '❌ Please paste a job description first!';
+                status.style.display = 'block';
+                return;
+            }
+            
+            status.className = 'status success';
+            status.innerHTML = '✅ Analysis complete! Job description processed successfully.';
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.innerHTML += '<br>🔄 Proceeding to Step 1.5 (Resume Import)...';
+            }, 1500);
+        }
+        
+        function skipAnalysis() {
+            console.log('Skip button clicked');
+            const status = document.getElementById('status');
+            
+            status.className = 'status success';
+            status.innerHTML = '✅ Skipping analysis. Proceeding to resume creation...';
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.innerHTML += '<br>🔄 Proceeding to Step 1.5 (Resume Import)...';
+            }, 1000);
+        }
+        
+        // Test button visibility on load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            
+            setTimeout(() => {
+                const buttons = document.querySelectorAll('button');
+                console.log('Total buttons found:', buttons.length);
+                
+                buttons.forEach((btn, index) => {
+                    console.log(`Button ${index + 1}:`, btn.textContent.trim());
+                    console.log(`Button ${index + 1} visible:`, btn.offsetWidth > 0 && btn.offsetHeight > 0);
+                });
+                
+                if (buttons.length === 0) {
+                    console.error('No buttons found! CSS might not be loading.');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

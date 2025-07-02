@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Generation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #1e7e34;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        #output {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Resume Generation Test</h1>
+        
+        <button onclick="fillTestData()">Fill Test Data</button>
+        <button onclick="testGeneration()" class="btn-success">Generate Resume</button>
+        <button onclick="clearData()" class="btn-secondary">Clear</button>
+        
+        <div class="form-group">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone">
+        </div>
+        
+        <div class="form-group">
+            <label for="technicalSkills">Technical Skills:</label>
+            <textarea id="technicalSkills" rows="2"></textarea>
+        </div>
+        
+        <div class="experience-item">
+            <div class="form-group">
+                <label>Job Title:</label>
+                <input type="text" class="exp-title">
+            </div>
+            <div class="form-group">
+                <label>Company:</label>
+                <input type="text" class="exp-company">
+            </div>
+        </div>
+        
+        <div id="output"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function fillTestData() {
+            document.getElementById('fullName').value = 'John Smith';
+            document.getElementById('email').value = 'john.smith@email.com';
+            document.getElementById('phone').value = '(555) 123-4567';
+            document.getElementById('technicalSkills').value = 'JavaScript, Python, React, Node.js';
+            document.querySelector('.exp-title').value = 'Software Engineer';
+            document.querySelector('.exp-company').value = 'Tech Corp';
+        }
+        
+        function testGeneration() {
+            try {
+                console.log('Testing resume generation...');
+                
+                const data = collectFormData();
+                console.log('Collected data:', data);
+                
+                const optimized = optimizeForATS(data, {});
+                console.log('Optimized data:', optimized);
+                
+                const html = generateResumeHTML(optimized);
+                console.log('Generated HTML length:', html.length);
+                
+                document.getElementById('output').innerHTML = html;
+                console.log('Resume generation test completed successfully!');
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                document.getElementById('output').innerHTML = `<div style="color: red; padding: 20px;">Error: ${error.message}</div>`;
+            }
+        }
+        
+        function clearData() {
+            document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+            document.getElementById('output').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

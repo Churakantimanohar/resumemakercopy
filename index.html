@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Builder - Tailored to Job Descriptions (v2.0)</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+    <!-- Essential button styles to ensure visibility -->
+    <style>
+        .button-group {
+            display: flex !important;
+            gap: 15px !important;
+            justify-content: center !important;
+            margin: 20px 0 !important;
+            flex-wrap: wrap !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .btn-primary, .btn-secondary, .btn-success {
+            padding: 12px 24px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            transition: all 0.3s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-width: 160px !important;
+            justify-content: center !important;
+            text-decoration: none !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 1000 !important;
+            position: relative !important;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3) !important;
+            color: white !important;
+        }
+        .btn-secondary {
+            background: #6c757d !important;
+            color: white !important;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34) !important;
+            color: white !important;
+        }
+        .btn-primary:hover, .btn-secondary:hover, .btn-success:hover {
+            transform: translateY(-2px) !important;
+            opacity: 0.9 !important;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css?v=2.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="script.js?v=2.0"></script>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-file-alt"></i> AI Resume Builder</h1>
+            <p>Create a tailored resume based on any job description</p>
+        </div>
+
+        <!-- Step 1: Job Description Analysis -->
+        <div id="step1" class="step-container">
+            <h2><i class="fas fa-search"></i> Step 1: Analyze Job Description</h2>
+            <div class="form-group">
+                <label for="jobDescription">Paste the Job Description:</label>
+                <textarea id="jobDescription" placeholder="Paste the complete job description here. Include requirements, responsibilities, and preferred qualifications..." rows="8"></textarea>
+                <small class="info">The more detailed the job description, the better we can tailor your resume</small>
+            </div>
+            <div class="button-group">
+                <button onclick="analyzeJobDescription()" class="btn-primary">
+                    <i class="fas fa-magic"></i> Analyze & Continue
+                </button>
+                <button onclick="skipAnalysis()" class="btn-secondary">
+                    <i class="fas fa-arrow-right"></i> Skip Analysis
+                </button>
+            </div>
+            <div id="analysisResult" class="analysis-result" style="display: none;"></div>
+        </div>
+
+        <!-- Step 1.5: Import Existing Resume (Optional) -->
+        <div id="step1_5" class="step-container" style="display: none;">
+            <h2><i class="fas fa-file-upload"></i> Step 1.5: Import Existing Resume (Optional)</h2>
+            <div class="import-options">
+                <div class="import-card">
+                    <h4><i class="fas fa-paste"></i> Paste Resume Text</h4>
+                    <p>Copy and paste your existing resume content</p>
+                    <button onclick="showResumeTextInput()" class="btn-secondary">Paste Resume</button>
+                </div>
+                <div class="import-card">
+                    <h4><i class="fas fa-upload"></i> Upload Resume File</h4>
+                    <p>Upload PDF, DOC, or TXT file</p>
+                    <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                    <button onclick="triggerFileUpload()" class="btn-secondary">Upload File</button>
+                </div>
+                <div class="import-card">
+                    <h4><i class="fas fa-edit"></i> Start Fresh</h4>
+                    <p>Create a new resume from scratch</p>
+                    <button onclick="skipResumeImport()" class="btn-primary">Start Fresh</button>
+                </div>
+            </div>
+            
+            <!-- Resume Text Input -->
+            <div id="resumeTextContainer" class="form-group" style="display: none;">
+                <label for="existingResume">Paste Your Existing Resume:</label>
+                <textarea id="existingResume" placeholder="Paste your complete resume content here..." rows="12"></textarea>
+                <div class="button-group">
+                    <button onclick="parseExistingResume()" class="btn-success">
+                        <i class="fas fa-magic"></i> Auto-Fill from Resume
+                    </button>
+                    <button onclick="hideResumeTextInput()" class="btn-secondary">Cancel</button>
+                </div>
+            </div>
+            
+            <div id="parseResult" class="parse-result" style="display: none;"></div>
+        </div>
+
+        <!-- Step 2: Personal Information -->
+        <div id="step2" class="step-container" style="display: none;">
+            <h2><i class="fas fa-user"></i> Step 2: Your Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Full Name:</label>
+                    <input type="text" id="fullName" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="john.doe@email.com">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" placeholder="+1 (555) 123-4567">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" placeholder="City, State">
+                </div>
+            </div>
+            
+            <!-- Professional Links Section -->
+            <div class="form-group">
+                <label><i class="fas fa-link"></i> Professional Links (optional):</label>
+                <div class="links-container">
+                    <div class="link-input-group">
+                        <select id="linkType1" class="link-type-select">
+                            <option value="">Select Platform</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="GitHub">GitHub</option>
+                            <option value="LeetCode">LeetCode</option>
+                            <option value="Portfolio">Portfolio</option>
+                            <option value="HackerRank">HackerRank</option>
+                            <option value="CodePen">CodePen</option>
+                            <option value="Behance">Behance</option>
+                            <option value="Dribbble">Dribbble</option>
+                            <option value="Stack Overflow">Stack Overflow</option>
+                            <option value="Website">Personal Website</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" id="linkUrl1" class="link-url-input" placeholder="https://linkedin.com/in/username">
+                    </div>
+                    
+                    <div class="link-input-group">
+                        <select id="linkType2" class="link-type-select">
+                            <option value="">Select Platform</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="GitHub">GitHub</option>
+                            <option value="LeetCode">LeetCode</option>
+                            <option value="Portfolio">Portfolio</option>
+                            <option value="HackerRank">HackerRank</option>
+                            <option value="CodePen">CodePen</option>
+                            <option value="Behance">Behance</option>
+                            <option value="Dribbble">Dribbble</option>
+                            <option value="Stack Overflow">Stack Overflow</option>
+                            <option value="Website">Personal Website</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" id="linkUrl2" class="link-url-input" placeholder="https://github.com/username">
+                    </div>
+                    
+                    <div class="link-input-group">
+                        <select id="linkType3" class="link-type-select">
+                            <option value="">Select Platform</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="GitHub">GitHub</option>
+                            <option value="LeetCode">LeetCode</option>
+                            <option value="Portfolio">Portfolio</option>
+                            <option value="HackerRank">HackerRank</option>
+                            <option value="CodePen">CodePen</option>
+                            <option value="Behance">Behance</option>
+                            <option value="Dribbble">Dribbble</option>
+                            <option value="Stack Overflow">Stack Overflow</option>
+                            <option value="Website">Personal Website</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" id="linkUrl3" class="link-url-input" placeholder="https://leetcode.com/username">
+                    </div>
+                </div>
+                <small class="info">Add your professional profiles. Only the platform name (e.g., "LinkedIn", "GitHub") will be displayed as clickable text in your resume.</small>
+            </div>
+            <div class="button-group">
+                <button onclick="nextStep('1_5')" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button onclick="nextStep(3)" class="btn-primary">
+                    <i class="fas fa-arrow-right"></i> Continue to Experience
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Experience -->
+        <div id="step3" class="step-container" style="display: none;">
+            <h2><i class="fas fa-briefcase"></i> Step 3: Work Experience</h2>
+            <div id="experienceContainer">
+                <div class="experience-item">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Job Title:</label>
+                            <input type="text" class="exp-title" placeholder="Software Developer">
+                        </div>
+                        <div class="form-group">
+                            <label>Company:</label>
+                            <input type="text" class="exp-company" placeholder="Tech Corp">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Duration:</label>
+                            <input type="text" class="exp-duration" placeholder="Jan 2020 - Present">
+                        </div>
+                        <div class="form-group">
+                            <label>Location:</label>
+                            <input type="text" class="exp-location" placeholder="New York, NY">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Key Achievements (one per line):</label>
+                        <textarea class="exp-achievements" rows="4" placeholder="• Developed and maintained web applications using React and Node.js&#10;• Improved application performance by 40% through code optimization&#10;• Collaborated with cross-functional teams to deliver projects on time"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="button-group">
+                <button onclick="addExperience()" class="btn-secondary">
+                    <i class="fas fa-plus"></i> Add Another Position
+                </button>
+                <button onclick="clearExperienceFields()" class="btn-secondary">
+                    <i class="fas fa-eraser"></i> Clear All Fields
+                </button>
+            </div>
+            <div class="button-group">
+                <button onclick="nextStep(2)" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button onclick="nextStep(4)" class="btn-primary">
+                    <i class="fas fa-arrow-right"></i> Continue to Education
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Education -->
+        <div id="step4" class="step-container" style="display: none;">
+            <h2><i class="fas fa-graduation-cap"></i> Step 4: Education</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="degree">Degree:</label>
+                    <input type="text" id="degree" placeholder="Bachelor of Science in Computer Science">
+                </div>
+                <div class="form-group">
+                    <label for="university">University/Institution:</label>
+                    <input type="text" id="university" placeholder="University of Technology">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="graduationYear">Graduation Year:</label>
+                    <input type="text" id="graduationYear" placeholder="2019">
+                </div>
+                <div class="form-group">
+                    <label for="gpa">GPA (optional):</label>
+                    <input type="text" id="gpa" placeholder="3.8/4.0">
+                </div>
+            </div>
+            <div class="button-group">
+                <button onclick="nextStep(3)" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button onclick="nextStep(5)" class="btn-primary">
+                    <i class="fas fa-arrow-right"></i> Continue to Skills
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 5: Skills -->
+        <div id="step5" class="step-container" style="display: none;">
+            <h2><i class="fas fa-tools"></i> Step 5: Skills & Technologies</h2>
+            <div id="skillsRecommendation" class="recommendation-box"></div>
+            <div class="form-group">
+                <label for="technicalSkills">Technical Skills:</label>
+                <textarea id="technicalSkills" rows="3" placeholder="JavaScript, Python, React, Node.js, SQL, Git, AWS"></textarea>
+                <small class="info">Separate skills with commas. Focus on skills mentioned in the job description.</small>
+            </div>
+            <div class="form-group">
+                <label for="softSkills">Soft Skills:</label>
+                <textarea id="softSkills" rows="3" placeholder="Team Leadership, Problem Solving, Communication, Project Management"></textarea>
+            </div>
+            <div class="button-group">
+                <button onclick="nextStep(4)" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button onclick="generateResume()" class="btn-success">
+                    <i class="fas fa-magic"></i> Generate My Resume
+                </button>
+            </div>
+        </div>
+
+        <!-- Resume Output -->
+        <div id="resumeOutput" class="resume-output" style="display: none;">
+            <div class="resume-actions">
+                <button onclick="downloadResume()" class="btn-primary"><i class="fas fa-download"></i> Download PDF</button>
+                <button onclick="copyToClipboard()" class="btn-secondary"><i class="fas fa-copy"></i> Copy Text</button>
+                <button onclick="startOver()" class="btn-secondary"><i class="fas fa-redo"></i> Create Another</button>
+            </div>
+            <div id="resumeContent" class="resume-content"></div>
+        </div>
+
+        <div class="footer">
+            <p>Built with AI to help you land your dream job</p>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>

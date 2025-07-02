@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .button-group {
+            display: flex !important;
+            gap: 15px !important;
+            justify-content: center !important;
+            margin: 20px 0 !important;
+            flex-wrap: wrap !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .btn-primary, .btn-secondary, .btn-success {
+            padding: 12px 24px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            transition: all 0.3s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-width: 160px !important;
+            justify-content: center !important;
+            text-decoration: none !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 1000 !important;
+            position: relative !important;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3) !important;
+            color: white !important;
+        }
+        .btn-secondary {
+            background: #6c757d !important;
+            color: white !important;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34) !important;
+            color: white !important;
+        }
+        .btn-primary:hover, .btn-secondary:hover, .btn-success:hover {
+            transform: translateY(-2px) !important;
+            opacity: 0.9 !important;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Button Visibility Test</h1>
+        
+        <h2><i class="fas fa-search"></i> Step 1: Analyze Job Description</h2>
+        <div class="form-group">
+            <label for="jobDescription">Paste the Job Description:</label>
+            <textarea id="jobDescription" placeholder="Test textarea..." rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="testFunction1()" class="btn-primary">
+                <i class="fas fa-magic"></i> Analyze & Continue
+            </button>
+            <button onclick="testFunction2()" class="btn-secondary">
+                <i class="fas fa-arrow-right"></i> Skip Analysis
+            </button>
+        </div>
+        
+        <div id="result" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px;"></div>
+    </div>
+
+    <script>
+        function testFunction1() {
+            document.getElementById('result').innerHTML = '<p style="color: green;">✅ Analyze button clicked successfully!</p>';
+        }
+        
+        function testFunction2() {
+            document.getElementById('result').innerHTML = '<p style="color: blue;">✅ Skip button clicked successfully!</p>';
+        }
+        
+        console.log('Test page loaded');
+        
+        // Check if buttons are visible
+        setTimeout(() => {
+            const buttons = document.querySelectorAll('button');
+            console.log('Buttons found:', buttons.length);
+            buttons.forEach((btn, index) => {
+                const styles = window.getComputedStyle(btn);
+                console.log(`Button ${index + 1}:`, {
+                    display: styles.display,
+                    visibility: styles.visibility,
+                    opacity: styles.opacity,
+                    text: btn.textContent.trim()
+                });
+            });
+        }, 500);
+    </script>
+</body>
+</html>

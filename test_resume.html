@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Resume Generation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-data { background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .resume-output { border: 1px solid #ccc; padding: 20px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Test Resume Generation</h1>
+    
+    <div class="test-data">
+        <h3>Test Data:</h3>
+        <p>This page will test the resume generation with sample data</p>
+    </div>
+    
+    <button onclick="testResumeGeneration()">Generate Test Resume</button>
+    
+    <div id="resume-output" class="resume-output"></div>
+    
+    <script>
+        // Minimal version of the createATSOptimizedResume function
+        function createATSOptimizedResume(data) {
+            const objective = `Experienced professional with expertise in ${data.technicalSkills.split(',').slice(0, 3).join(', ')}. Seeking to leverage proven experience in software development and problem-solving to contribute to innovative projects and drive business success.`;
+            
+            let resumeHTML = `
+                <div class="resume-header">
+                    <h1>${data.fullName}</h1>
+                    <div class="contact-info">
+                        <span>📧 ${data.email}</span>
+                        <span>📱 ${data.phone}</span>
+                        ${data.location ? `<span>📍 ${data.location}</span>` : ''}
+                        ${data.linkedin ? `<span>💼 ${data.linkedin}</span>` : ''}
+                    </div>
+                </div>
+
+                <div class="resume-section">
+                    <h2>Professional Summary</h2>
+                    <p>${objective}</p>
+                </div>
+            `;
+
+            // Technical Skills Section
+            if (data.technicalSkills) {
+                resumeHTML += `
+                    <div class="resume-section">
+                        <h2>Technical Skills</h2>
+                        <div class="skills-grid">
+                            ${data.technicalSkills.split(',').map(skill => 
+                                `<span style="background: #007bff; color: white; padding: 4px 8px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 12px;">${skill.trim()}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Experience Section
+            if (data.experiences && data.experiences.length > 0) {
+                resumeHTML += `
+                    <div class="resume-section">
+                        <h2>Professional Experience</h2>
+                `;
+                
+                data.experiences.forEach(exp => {
+                    if (exp.title || exp.company) {
+                        resumeHTML += `
+                            <div class="experience-entry" style="margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                                    <h3 style="margin: 0; color: #2c3e50;">${exp.title}</h3>
+                                    <span style="font-weight: bold; color: #7f8c8d; font-size: 0.9em;">${exp.duration || ''}</span>
+                                </div>
+                                <div style="color: #7f8c8d; font-style: italic; margin-bottom: 10px;">
+                                    <strong>${exp.company}</strong>
+                                    ${exp.location ? ` - ${exp.location}` : ''}
+                                </div>
+                                ${exp.achievements ? `<ul style="margin: 10px 0; padding-left: 20px;">${exp.achievements.split('\n').filter(item => item.trim()).map(item => `<li style="margin-bottom: 5px;">${item.trim()}</li>`).join('')}</ul>` : ''}
+                            </div>
+                        `;
+                    }
+                });
+                
+                resumeHTML += `</div>`;
+            }
+
+            return resumeHTML;
+        }
+        
+        function testResumeGeneration() {
+            const testData = {
+                fullName: "John Doe",
+                email: "john.doe@email.com",
+                phone: "(555) 123-4567",
+                location: "New York, NY",
+                linkedin: "linkedin.com/in/johndoe",
+                technicalSkills: "JavaScript, Python, React, Node.js, SQL",
+                experiences: [
+                    {
+                        title: "Senior Software Engineer",
+                        company: "Tech Corp",
+                        duration: "2020 - Present",
+                        location: "New York, NY",
+                        achievements: "Developed web applications using React and Node.js\nImproved system performance by 30%\nLed a team of 5 developers"
+                    },
+                    {
+                        title: "Software Developer",
+                        company: "StartupXYZ",
+                        duration: "2018 - 2020",
+                        location: "Boston, MA",
+                        achievements: "Built RESTful APIs with Python and Flask\nImplemented automated testing procedures\nCollaborated with cross-functional teams"
+                    }
+                ]
+            };
+            
+            try {
+                const resumeHTML = createATSOptimizedResume(testData);
+                document.getElementById('resume-output').innerHTML = resumeHTML;
+                console.log('Resume generated successfully!');
+            } catch (error) {
+                console.error('Error generating resume:', error);
+                document.getElementById('resume-output').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
