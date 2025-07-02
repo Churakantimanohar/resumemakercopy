@@ -713,7 +713,12 @@ function autoFillTestData() {
     }
     
     console.log('Test data auto-filled successfully!');
-    alert('Test data has been filled in all forms. You can now proceed through the steps or make modifications as needed.');
+    
+    // Navigate to the final step (step 5) after filling data
+    setTimeout(() => {
+        nextStep(5);
+        alert('Test data has been filled in all forms! You can now generate your resume or make modifications as needed.');
+    }, 500); // Small delay to ensure all data is filled first
 }
 
 // Ensure the function is available globally for onclick attributes (must be outside event listeners)
