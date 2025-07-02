@@ -4,6 +4,433 @@ console.log('Resume Builder script loaded successfully');
 let jobAnalysis = {};
 let parsedResumeData = {};
 
+// Immediately expose critical functions to global scope for GitHub Pages compatibility
+window.autoFillTestData = function() {
+    console.log('Auto-filling test data...');
+    
+    // Personal Information
+    const fullNameEl = document.getElementById('fullName');
+    if (fullNameEl) fullNameEl.value = 'John Smith';
+    
+    const emailEl = document.getElementById('email');
+    if (emailEl) emailEl.value = 'john.smith@email.com';
+    
+    const phoneEl = document.getElementById('phone');
+    if (phoneEl) phoneEl.value = '(555) 123-4567';
+    
+    const locationEl = document.getElementById('location');
+    if (locationEl) locationEl.value = 'San Francisco, CA';
+    
+    // Professional Links
+    const linkType1 = document.getElementById('linkType1');
+    const linkUrl1 = document.getElementById('linkUrl1');
+    if (linkType1 && linkUrl1) {
+        linkType1.value = 'LinkedIn';
+        linkUrl1.value = 'https://linkedin.com/in/johnsmith';
+    }
+    
+    const linkType2 = document.getElementById('linkType2');
+    const linkUrl2 = document.getElementById('linkUrl2');
+    if (linkType2 && linkUrl2) {
+        linkType2.value = 'GitHub';
+        linkUrl2.value = 'https://github.com/johnsmith';
+    }
+    
+    const linkType3 = document.getElementById('linkType3');
+    const linkUrl3 = document.getElementById('linkUrl3');
+    if (linkType3 && linkUrl3) {
+        linkType3.value = 'Portfolio';
+        linkUrl3.value = 'https://johnsmith.dev';
+    }
+    
+    // Work Experience (First Entry)
+    const expTitle = document.querySelector('.exp-title');
+    if (expTitle) expTitle.value = 'Senior Software Engineer';
+    
+    const expCompany = document.querySelector('.exp-company');
+    if (expCompany) expCompany.value = 'Tech Innovations Inc.';
+    
+    const expDuration = document.querySelector('.exp-duration');
+    if (expDuration) expDuration.value = 'January 2020 - Present';
+    
+    const expLocation = document.querySelector('.exp-location');
+    if (expLocation) expLocation.value = 'San Francisco, CA';
+    
+    const expAchievements = document.querySelector('.exp-achievements');
+    if (expAchievements) {
+        expAchievements.value = `• Led development of microservices architecture serving 1M+ daily users
+• Improved application performance by 40% through code optimization and database tuning
+• Mentored team of 5 junior developers and established coding best practices
+• Implemented CI/CD pipelines reducing deployment time by 60%
+• Collaborated with product managers to deliver features ahead of schedule`;
+    }
+    
+    // Add a second experience entry if addExperience function exists
+    if (typeof window.addExperience === 'function') {
+        window.addExperience();
+        setTimeout(() => {
+            const expItems = document.querySelectorAll('.experience-item');
+            if (expItems.length > 1) {
+                const secondExp = expItems[1];
+                
+                const expTitle2 = secondExp.querySelector('.exp-title');
+                if (expTitle2) expTitle2.value = 'Software Developer';
+                
+                const expCompany2 = secondExp.querySelector('.exp-company');
+                if (expCompany2) expCompany2.value = 'StartupXYZ';
+                
+                const expDuration2 = secondExp.querySelector('.exp-duration');
+                if (expDuration2) expDuration2.value = 'June 2018 - December 2019';
+                
+                const expLocation2 = secondExp.querySelector('.exp-location');
+                if (expLocation2) expLocation2.value = 'Palo Alto, CA';
+                
+                const expAchievements2 = secondExp.querySelector('.exp-achievements');
+                if (expAchievements2) {
+                    expAchievements2.value = `• Developed RESTful APIs using Node.js and Express, handling 100K+ requests daily
+• Built responsive web applications using React and TypeScript
+• Integrated third-party payment systems (Stripe, PayPal) with 99.9% uptime
+• Participated in agile development process with 2-week sprints
+• Wrote comprehensive unit tests achieving 85% code coverage`;
+                }
+            }
+        }, 100);
+    }
+    
+    // Education
+    const degreeEl = document.getElementById('degree');
+    if (degreeEl) degreeEl.value = 'Bachelor of Science in Computer Science';
+    
+    const universityEl = document.getElementById('university');
+    if (universityEl) universityEl.value = 'Stanford University';
+    
+    const graduationYearEl = document.getElementById('graduationYear');
+    if (graduationYearEl) graduationYearEl.value = '2018';
+    
+    const gpaEl = document.getElementById('gpa');
+    if (gpaEl) gpaEl.value = '3.8/4.0';
+    
+    // Skills
+    const technicalSkillsEl = document.getElementById('technicalSkills');
+    if (technicalSkillsEl) {
+        technicalSkillsEl.value = 'JavaScript, TypeScript, React, Node.js, Python, Java, SQL, MongoDB, PostgreSQL, AWS, Docker, Kubernetes, Git, Jenkins, REST APIs, GraphQL, Microservices, Agile, Scrum';
+    }
+    
+    const softSkillsEl = document.getElementById('softSkills');
+    if (softSkillsEl) {
+        softSkillsEl.value = 'Leadership, Team Collaboration, Problem Solving, Communication, Project Management, Mentoring, Critical Thinking, Adaptability';
+    }
+    
+    console.log('Test data auto-filled successfully!');
+    
+    // Check if we're already on Step 5, if so don't navigate
+    const step5 = document.getElementById('step5');
+    const isOnStep5 = step5 && step5.style.display !== 'none';
+    
+    if (!isOnStep5) {
+        // Navigate to the final step (step 5) after filling data
+        setTimeout(() => {
+            if (typeof window.nextStep === 'function') {
+                window.nextStep(5);
+            }
+            alert('Test data has been filled in all forms! You can now generate your resume or make modifications as needed.');
+        }, 500); // Small delay to ensure all data is filled first
+    } else {
+        // We're already on Step 5, just show success message
+        alert('Test data has been filled in all forms! You can now generate your resume or make modifications as needed.');
+    }
+};
+
+// Expose other critical functions immediately
+window.analyzeJobDescription = function() {
+    const jobDesc = document.getElementById('jobDescription').value.trim();
+    if (!jobDesc) {
+        alert('Please paste a job description first.');
+        return;
+    }
+
+    // Simple keyword extraction and analysis
+    const keywords = extractKeywords(jobDesc);
+    const requiredSkills = extractSkills(jobDesc);
+    const experienceLevel = extractExperienceLevel(jobDesc);
+    
+    jobAnalysis = {
+        description: jobDesc,
+        keywords: keywords,
+        requiredSkills: requiredSkills,
+        experienceLevel: experienceLevel
+    };
+
+    displayAnalysis();
+    window.nextStep('1_5'); // Go to resume import step
+};
+
+window.skipAnalysis = function() {
+    console.log('Skip Analysis button clicked');
+    // Set empty job analysis
+    jobAnalysis = {
+        description: '',
+        keywords: [],
+        requiredSkills: [],
+        experienceLevel: 'Not specified'
+    };
+    
+    // Go directly to resume import step
+    window.nextStep('1_5');
+};
+
+window.nextStep = function(step) {
+    console.log('Next step function called:', step);
+    // Hide all steps
+    const steps = document.querySelectorAll('.step-container');
+    steps.forEach(s => s.style.display = 'none');
+    
+    // Show target step
+    const targetStep = step === '1_5' ? 'step1_5' : `step${step}`;
+    const targetElement = document.getElementById(targetStep);
+    if (targetElement) {
+        targetElement.style.display = 'block';
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+    }
+};
+
+window.generateResume = function() {
+    console.log('Generate Resume button clicked');
+    
+    // Show loading state
+    const generateBtn = document.querySelector('.btn-success');
+    if (!generateBtn) {
+        console.error('Generate button not found');
+        return;
+    }
+    
+    const originalHTML = generateBtn.innerHTML;
+    generateBtn.innerHTML = '<div class="parsing-loader"></div> Generating Resume...';
+    generateBtn.disabled = true;
+    
+    // Clear previous errors (only if the container exists)
+    const errorsContainer = document.getElementById('validationErrors');
+    if (errorsContainer) {
+        errorsContainer.style.display = 'none';
+        errorsContainer.innerHTML = '';
+    }
+    
+    // Validate form
+    const validationResult = validateForm();
+    if (!validationResult.isValid) {
+        showValidationErrors(validationResult.errors);
+        generateBtn.innerHTML = originalHTML;
+        generateBtn.disabled = false;
+        return;
+    }
+    
+    try {
+        // Collect data
+        const resumeData = collectFormData();
+        console.log('Collected form data:', resumeData);
+        
+        // Generate ATS-optimized resume
+        const optimizedData = optimizeForATS(resumeData, jobAnalysis);
+        console.log('Optimized data:', optimizedData);
+        
+        // Create and display resume
+        const resumeHTML = generateResumeHTML(optimizedData);
+        console.log('Generated resume HTML');
+        
+        // Display result
+        document.getElementById('resumeOutput').innerHTML = `
+            <div class="resume-actions">
+                <button onclick="downloadResume()" class="btn-primary"><i class="fas fa-print"></i> Print / Save as PDF</button>
+                <button onclick="copyToClipboard()" class="btn-secondary"><i class="fas fa-copy"></i> Copy Text</button>
+                <button onclick="startOver()" class="btn-secondary"><i class="fas fa-redo"></i> Create Another</button>
+            </div>
+            ${resumeHTML}
+        `;
+        
+        // Hide all steps and show resume output
+        document.querySelectorAll('.step-container').forEach(step => {
+            step.style.display = 'none';
+        });
+        document.getElementById('resumeOutput').style.display = 'block';
+        
+        // Reset button
+        generateBtn.innerHTML = originalHTML;
+        generateBtn.disabled = false;
+        
+        // Show success message
+        showSuccessMessage('Resume generated successfully!');
+        
+        // Scroll to resume
+        document.getElementById('resumeOutput').scrollIntoView({ behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('Error generating resume:', error);
+        alert('Error generating resume: ' + error.message);
+        
+        // Reset button on error
+        generateBtn.innerHTML = originalHTML;
+        generateBtn.disabled = false;
+    }
+};
+
+window.addExperience = function() {
+    console.log('Add experience function called');
+    const container = document.getElementById('experienceContainer');
+    if (!container) return;
+    
+    const newExperience = container.children[0].cloneNode(true);
+    
+    // Clear values
+    newExperience.querySelectorAll('input, textarea').forEach(input => {
+        input.value = '';
+    });
+    
+    // Add remove button
+    const removeBtn = document.createElement('button');
+    removeBtn.innerHTML = '<i class="fas fa-trash"></i> Remove';
+    removeBtn.className = 'btn-remove';
+    removeBtn.onclick = function() {
+        newExperience.remove();
+    };
+    
+    newExperience.appendChild(removeBtn);
+    container.appendChild(newExperience);
+};
+
+// Add other essential window functions
+window.showResumeTextInput = function() {
+    document.getElementById('resumeTextContainer').style.display = 'block';
+    document.querySelector('.import-options').style.display = 'none';
+};
+
+window.hideResumeTextInput = function() {
+    document.getElementById('resumeTextContainer').style.display = 'none';
+    document.querySelector('.import-options').style.display = 'block';
+};
+
+window.triggerFileUpload = function() {
+    document.getElementById('resumeFile').click();
+};
+
+window.skipResumeImport = function() {
+    window.nextStep(2);
+};
+
+window.parseExistingResume = function() {
+    const resumeText = document.getElementById('existingResume').value.trim();
+    if (!resumeText) {
+        alert('Please paste your resume content first.');
+        return;
+    }
+
+    console.log('Starting resume parsing...');
+    console.log('Resume text length:', resumeText.length);
+    
+    try {
+        parsedResumeData = parseResumeText(resumeText);
+        console.log('Parsing completed. Result:', parsedResumeData);
+        
+        displayParseResults(parsedResumeData);
+        fillFormWithParsedData(parsedResumeData);
+        
+        // Show success message and continue after a delay
+        setTimeout(() => {
+            console.log('Navigating to next step...');
+            window.nextStep(2);
+        }, 3000); // Increased delay to see results
+        
+    } catch (error) {
+        console.error('Error during resume parsing:', error);
+        alert('Error parsing resume: ' + error.message);
+    }
+};
+
+window.clearExperienceFields = function() {
+    console.log('Clearing experience fields...');
+    const experienceItems = document.querySelectorAll('.experience-item');
+    
+    experienceItems.forEach(item => {
+        const titleField = item.querySelector('.exp-title');
+        const companyField = item.querySelector('.exp-company');
+        const durationField = item.querySelector('.exp-duration');
+        const locationField = item.querySelector('.exp-location');
+        const achievementsField = item.querySelector('.exp-achievements');
+        
+        if (titleField) titleField.value = '';
+        if (companyField) companyField.value = '';
+        if (durationField) durationField.value = '';
+        if (locationField) locationField.value = '';
+        if (achievementsField) achievementsField.value = '';
+    });
+    
+    console.log('Experience fields cleared');
+};
+
+window.downloadResume = function() {
+    console.log('Download Resume button clicked');
+    
+    // Show loading indicator briefly
+    const downloadBtn = document.querySelector('.resume-actions .btn-primary');
+    const originalText = downloadBtn.innerHTML;
+    downloadBtn.innerHTML = '<i class="fas fa-print"></i> Opening Print Dialog...';
+    downloadBtn.disabled = true;
+    
+    // Small delay to show loading state
+    setTimeout(() => {
+        try {
+            exportToPDF();
+        } finally {
+            // Restore button after a delay
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+            }, 1500);
+        }
+    }, 100);
+};
+
+window.copyToClipboard = function() {
+    console.log('Copy to Clipboard button clicked');
+    const resumeContent = document.getElementById('resumeContent');
+    if (resumeContent) {
+        const text = resumeContent.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Resume copied to clipboard!');
+        }).catch(() => {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Resume copied to clipboard!');
+        });
+    }
+};
+
+window.startOver = function() {
+    console.log('Start Over button clicked');
+    // Reset all form data
+    document.querySelectorAll('input, textarea').forEach(input => {
+        input.value = '';
+    });
+    
+    // Reset global variables
+    jobAnalysis = {};
+    parsedResumeData = {};
+    
+    // Hide all steps except step 1
+    document.querySelectorAll('.step-container').forEach(step => {
+        step.style.display = 'none';
+    });
+    document.getElementById('resumeOutput').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+};
+
 // Global functions that need to be accessible from HTML onclick attributes
 function analyzeJobDescription() {
     const jobDesc = document.getElementById('jobDescription').value.trim();
@@ -596,147 +1023,6 @@ function displayAnalysis() {
     `;
     resultDiv.style.display = 'block';
 }
-
-// Test data for auto-fill
-function autoFillTestData() {
-    console.log('Auto-filling test data...');
-    
-    // Personal Information
-    const fullNameEl = document.getElementById('fullName');
-    if (fullNameEl) fullNameEl.value = 'John Smith';
-    
-    const emailEl = document.getElementById('email');
-    if (emailEl) emailEl.value = 'john.smith@email.com';
-    
-    const phoneEl = document.getElementById('phone');
-    if (phoneEl) phoneEl.value = '(555) 123-4567';
-    
-    const locationEl = document.getElementById('location');
-    if (locationEl) locationEl.value = 'San Francisco, CA';
-    
-    // Professional Links
-    const linkType1 = document.getElementById('linkType1');
-    const linkUrl1 = document.getElementById('linkUrl1');
-    if (linkType1 && linkUrl1) {
-        linkType1.value = 'LinkedIn';
-        linkUrl1.value = 'https://linkedin.com/in/johnsmith';
-    }
-    
-    const linkType2 = document.getElementById('linkType2');
-    const linkUrl2 = document.getElementById('linkUrl2');
-    if (linkType2 && linkUrl2) {
-        linkType2.value = 'GitHub';
-        linkUrl2.value = 'https://github.com/johnsmith';
-    }
-    
-    const linkType3 = document.getElementById('linkType3');
-    const linkUrl3 = document.getElementById('linkUrl3');
-    if (linkType3 && linkUrl3) {
-        linkType3.value = 'Portfolio';
-        linkUrl3.value = 'https://johnsmith.dev';
-    }
-    
-    // Work Experience (First Entry)
-    const expTitle = document.querySelector('.exp-title');
-    if (expTitle) expTitle.value = 'Senior Software Engineer';
-    
-    const expCompany = document.querySelector('.exp-company');
-    if (expCompany) expCompany.value = 'Tech Innovations Inc.';
-    
-    const expDuration = document.querySelector('.exp-duration');
-    if (expDuration) expDuration.value = 'January 2020 - Present';
-    
-    const expLocation = document.querySelector('.exp-location');
-    if (expLocation) expLocation.value = 'San Francisco, CA';
-    
-    const expAchievements = document.querySelector('.exp-achievements');
-    if (expAchievements) {
-        expAchievements.value = `• Led development of microservices architecture serving 1M+ daily users
-• Improved application performance by 40% through code optimization and database tuning
-• Mentored team of 5 junior developers and established coding best practices
-• Implemented CI/CD pipelines reducing deployment time by 60%
-• Collaborated with product managers to deliver features ahead of schedule`;
-    }
-    
-    // Add a second experience entry
-    addExperience();
-    setTimeout(() => {
-        const expItems = document.querySelectorAll('.experience-item');
-        if (expItems.length > 1) {
-            const secondExp = expItems[1];
-            
-            const expTitle2 = secondExp.querySelector('.exp-title');
-            if (expTitle2) expTitle2.value = 'Software Developer';
-            
-            const expCompany2 = secondExp.querySelector('.exp-company');
-            if (expCompany2) expCompany2.value = 'StartupXYZ';
-            
-            const expDuration2 = secondExp.querySelector('.exp-duration');
-            if (expDuration2) expDuration2.value = 'June 2018 - December 2019';
-            
-            const expLocation2 = secondExp.querySelector('.exp-location');
-            if (expLocation2) expLocation2.value = 'Palo Alto, CA';
-            
-            const expAchievements2 = secondExp.querySelector('.exp-achievements');
-            if (expAchievements2) {
-                expAchievements2.value = `• Developed RESTful APIs using Node.js and Express, handling 100K+ requests daily
-• Built responsive web applications using React and TypeScript
-• Integrated third-party payment systems (Stripe, PayPal) with 99.9% uptime
-• Participated in agile development process with 2-week sprints
-• Wrote comprehensive unit tests achieving 85% code coverage`;
-            }
-        }
-    }, 100);
-    
-    // Education
-    const degreeEl = document.getElementById('degree');
-    if (degreeEl) degreeEl.value = 'Bachelor of Science in Computer Science';
-    
-    const universityEl = document.getElementById('university');
-    if (universityEl) universityEl.value = 'Stanford University';
-    
-    const graduationYearEl = document.getElementById('graduationYear');
-    if (graduationYearEl) graduationYearEl.value = '2018';
-    
-    const gpaEl = document.getElementById('gpa');
-    if (gpaEl) gpaEl.value = '3.8/4.0';
-    
-    // Skills
-    const technicalSkillsEl = document.getElementById('technicalSkills');
-    if (technicalSkillsEl) {
-        technicalSkillsEl.value = 'JavaScript, TypeScript, React, Node.js, Python, Java, SQL, MongoDB, PostgreSQL, AWS, Docker, Kubernetes, Git, Jenkins, REST APIs, GraphQL, Microservices, Agile, Scrum';
-    }
-    
-    const softSkillsEl = document.getElementById('softSkills');
-    if (softSkillsEl) {
-        softSkillsEl.value = 'Leadership, Team Collaboration, Problem Solving, Communication, Project Management, Mentoring, Critical Thinking, Adaptability';
-    }
-    
-    console.log('Test data auto-filled successfully!');
-    
-    // Navigate to the final step (step 5) after filling data
-    setTimeout(() => {
-        nextStep(5);
-        alert('Test data has been filled in all forms! You can now generate your resume or make modifications as needed.');
-    }, 500); // Small delay to ensure all data is filled first
-}
-
-// Ensure the function is available globally for onclick attributes (must be outside event listeners)
-window.autoFillTestData = autoFillTestData;
-window.analyzeJobDescription = analyzeJobDescription;
-window.skipAnalysis = skipAnalysis;
-window.showResumeTextInput = showResumeTextInput;
-window.hideResumeTextInput = hideResumeTextInput;
-window.triggerFileUpload = triggerFileUpload;
-window.skipResumeImport = skipResumeImport;
-window.parseExistingResume = parseExistingResume;
-window.nextStep = nextStep;
-window.addExperience = addExperience;
-window.clearExperienceFields = clearExperienceFields;
-window.generateResume = generateResume;
-window.downloadResume = downloadResume;
-window.copyToClipboard = copyToClipboard;
-window.startOver = startOver;
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
