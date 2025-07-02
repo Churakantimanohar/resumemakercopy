@@ -614,10 +614,24 @@ body {
 
 .contact-info {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.contact-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 20px;
-    font-size: 14px;
+}
+
+.contact-line .separator {
+    margin: 0 4px;
+    font-size: 12px;
+    color: #666;
 }
 
 .contact-info span {
@@ -932,6 +946,24 @@ body {
     .contact-info {
         font-size: 10px !important;
         gap: 15px !important;
+    }
+    
+    .contact-line {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .contact-line .separator {
+        margin: 0 4px !important;
+        font-size: 10px !important;
+    }
+    
+    .professional-links {
+        text-align: center !important;
+        margin-top: 4px !important;
     }
     
     .resume-section {
@@ -1646,12 +1678,32 @@ body {
     border-radius: 0 !important;
 }
 
+.pdf-ready .contact-line {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+}
+
+.pdf-ready .contact-line .separator {
+    margin: 0 3px !important;
+    font-size: 10px !important;
+    color: #333 !important;
+}
+
+.pdf-ready .professional-links {
+    text-align: center !important;
+    margin-top: 3px !important;
+}
+
 .pdf-ready .professional-links a {
     color: #0066cc !important;
     text-decoration: none !important;
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
+    font-size: 10px !important;
 }
 
 .pdf-ready .skill-tag {

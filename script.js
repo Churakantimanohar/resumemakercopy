@@ -238,22 +238,29 @@ function exportToPDF() {
     // Add PDF-ready class for better styling
     resumeContent.classList.add('pdf-ready');
     
+    // Get the full name for filename
+    const nameElement = document.querySelector('.name');
+    const fileName = nameElement ? 
+        nameElement.textContent.trim().replace(/\s+/g, '_').toLowerCase() + '_resume.pdf' : 
+        'resume.pdf';
+    
     // Try html2pdf first
     if (typeof html2pdf !== 'undefined') {
         const opt = {
-            margin: [0.4, 0.4, 0.4, 0.4],
-            filename: `${document.querySelector('.name')?.textContent?.replace(/\s+/g, '_') || 'resume'}.pdf`,
+            margin: [0.5, 0.5, 0.5, 0.5],
+            filename: fileName,
             image: { 
                 type: 'jpeg', 
                 quality: 0.98 
             },
             html2canvas: { 
-                scale: 1.5,
+                scale: 2,
                 useCORS: true,
                 letterRendering: true,
                 logging: false,
-                height: resumeContent.scrollHeight,
-                width: resumeContent.scrollWidth
+                height: resumeContent.scrollHeight + 20,
+                width: resumeContent.scrollWidth + 20,
+                backgroundColor: '#ffffff'
             },
             jsPDF: { 
                 unit: 'in', 
@@ -543,9 +550,150 @@ function displayAnalysis() {
     resultDiv.style.display = 'block';
 }
 
+// Test data for auto-fill
+function autoFillTestData() {
+    console.log('Auto-filling test data...');
+    
+    // Personal Information
+    const fullNameEl = document.getElementById('fullName');
+    if (fullNameEl) fullNameEl.value = 'John Smith';
+    
+    const emailEl = document.getElementById('email');
+    if (emailEl) emailEl.value = 'john.smith@email.com';
+    
+    const phoneEl = document.getElementById('phone');
+    if (phoneEl) phoneEl.value = '(555) 123-4567';
+    
+    const locationEl = document.getElementById('location');
+    if (locationEl) locationEl.value = 'San Francisco, CA';
+    
+    // Professional Links
+    const linkType1 = document.getElementById('linkType1');
+    const linkUrl1 = document.getElementById('linkUrl1');
+    if (linkType1 && linkUrl1) {
+        linkType1.value = 'LinkedIn';
+        linkUrl1.value = 'https://linkedin.com/in/johnsmith';
+    }
+    
+    const linkType2 = document.getElementById('linkType2');
+    const linkUrl2 = document.getElementById('linkUrl2');
+    if (linkType2 && linkUrl2) {
+        linkType2.value = 'GitHub';
+        linkUrl2.value = 'https://github.com/johnsmith';
+    }
+    
+    const linkType3 = document.getElementById('linkType3');
+    const linkUrl3 = document.getElementById('linkUrl3');
+    if (linkType3 && linkUrl3) {
+        linkType3.value = 'Portfolio';
+        linkUrl3.value = 'https://johnsmith.dev';
+    }
+    
+    // Work Experience (First Entry)
+    const expTitle = document.querySelector('.exp-title');
+    if (expTitle) expTitle.value = 'Senior Software Engineer';
+    
+    const expCompany = document.querySelector('.exp-company');
+    if (expCompany) expCompany.value = 'Tech Innovations Inc.';
+    
+    const expDuration = document.querySelector('.exp-duration');
+    if (expDuration) expDuration.value = 'January 2020 - Present';
+    
+    const expLocation = document.querySelector('.exp-location');
+    if (expLocation) expLocation.value = 'San Francisco, CA';
+    
+    const expAchievements = document.querySelector('.exp-achievements');
+    if (expAchievements) {
+        expAchievements.value = `• Led development of microservices architecture serving 1M+ daily users
+• Improved application performance by 40% through code optimization and database tuning
+• Mentored team of 5 junior developers and established coding best practices
+• Implemented CI/CD pipelines reducing deployment time by 60%
+• Collaborated with product managers to deliver features ahead of schedule`;
+    }
+    
+    // Add a second experience entry
+    addExperience();
+    setTimeout(() => {
+        const expItems = document.querySelectorAll('.experience-item');
+        if (expItems.length > 1) {
+            const secondExp = expItems[1];
+            
+            const expTitle2 = secondExp.querySelector('.exp-title');
+            if (expTitle2) expTitle2.value = 'Software Developer';
+            
+            const expCompany2 = secondExp.querySelector('.exp-company');
+            if (expCompany2) expCompany2.value = 'StartupXYZ';
+            
+            const expDuration2 = secondExp.querySelector('.exp-duration');
+            if (expDuration2) expDuration2.value = 'June 2018 - December 2019';
+            
+            const expLocation2 = secondExp.querySelector('.exp-location');
+            if (expLocation2) expLocation2.value = 'Palo Alto, CA';
+            
+            const expAchievements2 = secondExp.querySelector('.exp-achievements');
+            if (expAchievements2) {
+                expAchievements2.value = `• Developed RESTful APIs using Node.js and Express, handling 100K+ requests daily
+• Built responsive web applications using React and TypeScript
+• Integrated third-party payment systems (Stripe, PayPal) with 99.9% uptime
+• Participated in agile development process with 2-week sprints
+• Wrote comprehensive unit tests achieving 85% code coverage`;
+            }
+        }
+    }, 100);
+    
+    // Education
+    const degreeEl = document.getElementById('degree');
+    if (degreeEl) degreeEl.value = 'Bachelor of Science in Computer Science';
+    
+    const universityEl = document.getElementById('university');
+    if (universityEl) universityEl.value = 'Stanford University';
+    
+    const graduationYearEl = document.getElementById('graduationYear');
+    if (graduationYearEl) graduationYearEl.value = '2018';
+    
+    const gpaEl = document.getElementById('gpa');
+    if (gpaEl) gpaEl.value = '3.8/4.0';
+    
+    // Skills
+    const technicalSkillsEl = document.getElementById('technicalSkills');
+    if (technicalSkillsEl) {
+        technicalSkillsEl.value = 'JavaScript, TypeScript, React, Node.js, Python, Java, SQL, MongoDB, PostgreSQL, AWS, Docker, Kubernetes, Git, Jenkins, REST APIs, GraphQL, Microservices, Agile, Scrum';
+    }
+    
+    const softSkillsEl = document.getElementById('softSkills');
+    if (softSkillsEl) {
+        softSkillsEl.value = 'Leadership, Team Collaboration, Problem Solving, Communication, Project Management, Mentoring, Critical Thinking, Adaptability';
+    }
+    
+    console.log('Test data auto-filled successfully!');
+    alert('Test data has been filled in all forms. You can now proceed through the steps or make modifications as needed.');
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded - Resume Builder ready');
+    
+    // Add auto-fill button to step 1
+    setTimeout(() => {
+        const step1 = document.getElementById('step1');
+        if (step1) {
+            const buttonGroup = step1.querySelector('.button-group');
+            if (buttonGroup) {
+                // Create auto-fill test button
+                const autoFillBtn = document.createElement('button');
+                autoFillBtn.innerHTML = '<i class="fas fa-magic"></i> Auto-Fill Test Data';
+                autoFillBtn.className = 'btn-secondary';
+                autoFillBtn.onclick = autoFillTestData;
+                autoFillBtn.style.backgroundColor = '#28a745';
+                autoFillBtn.style.color = 'white';
+                autoFillBtn.title = 'Fills all forms with sample data for testing';
+                
+                // Add the button to the button group
+                buttonGroup.appendChild(autoFillBtn);
+                console.log('Auto-fill test button added to step 1');
+            }
+        }
+    }, 500);
     
     // Debug: Check if buttons are present
     setTimeout(() => {
@@ -1549,7 +1697,7 @@ function generateResumeHTML(data) {
             .map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.display}</a>`)
             .join(' <span class="separator">•</span> ');
         
-        return linksHTML ? `<br><div class="professional-links">${linksHTML}</div>` : '';
+        return linksHTML ? `<div class="professional-links">${linksHTML}</div>` : '';
     };
     
     return `
@@ -1559,10 +1707,12 @@ function generateResumeHTML(data) {
                 <div class="resume-header">
                     <h1 class="name">${data.fullName}</h1>
                     <div class="contact-info">
-                        <span class="email">${data.email}</span>
-                        <span class="separator"> • </span>
-                        <span class="phone">${data.phone}</span>
-                        ${data.location ? `<span class="separator"> • </span><span class="location">${data.location}</span>` : ''}
+                        <div class="contact-line">
+                            <span class="email">${data.email}</span>
+                            <span class="separator">•</span>
+                            <span class="phone">${data.phone}</span>
+                            ${data.location ? `<span class="separator">•</span><span class="location">${data.location}</span>` : ''}
+                        </div>
                         ${generateLinksHTML()}
                     </div>
                 </div>
