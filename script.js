@@ -193,7 +193,7 @@ function generateResume() {
         // Display result
         document.getElementById('resumeOutput').innerHTML = `
             <div class="resume-actions">
-                <button onclick="downloadResume()" class="btn-primary"><i class="fas fa-download"></i> Download PDF</button>
+                <button onclick="downloadResume()" class="btn-primary"><i class="fas fa-print"></i> Print / Save as PDF</button>
                 <button onclick="copyToClipboard()" class="btn-secondary"><i class="fas fa-copy"></i> Copy Text</button>
                 <button onclick="startOver()" class="btn-secondary"><i class="fas fa-redo"></i> Create Another</button>
             </div>
@@ -227,7 +227,7 @@ function generateResume() {
 }
 
 function exportToPDF() {
-    console.log('Exporting to PDF...');
+    console.log('Exporting to PDF using window.print()...');
     const resumeContent = document.getElementById('resumeContent');
     
     if (!resumeContent) {
@@ -235,63 +235,110 @@ function exportToPDF() {
         return;
     }
     
-    // Add PDF-ready class for better styling
-    resumeContent.classList.add('pdf-ready');
+    // Show user instructions
+    const userConfirmed = confirm(
+        'This will open the browser\'s print dialog.\n\n' +
+        'To save as PDF:\n' +
+        '1. Select "Save as PDF" or "Microsoft Print to PDF" as the destination\n' +
+        '2. Click "Save" or "Print"\n' +
+        '3. Choose your desired location and filename\n\n' +
+        'Click OK to continue.'
+    );
     
-    // Get the full name for filename
-    const nameElement = document.querySelector('.name');
-    const fileName = nameElement ? 
-        nameElement.textContent.trim().replace(/\s+/g, '_').toLowerCase() + '_resume.pdf' : 
-        'resume.pdf';
-    
-    // Try html2pdf first
-    if (typeof html2pdf !== 'undefined') {
-        const opt = {
-            margin: [0.5, 0.5, 0.5, 0.5],
-            filename: fileName,
-            image: { 
-                type: 'jpeg', 
-                quality: 0.98 
-            },
-            html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                letterRendering: true,
-                logging: false,
-                height: resumeContent.scrollHeight + 20,
-                width: resumeContent.scrollWidth + 20,
-                backgroundColor: '#ffffff'
-            },
-            jsPDF: { 
-                unit: 'in', 
-                format: 'letter', 
-                orientation: 'portrait',
-                compress: true
-            },
-            pagebreak: { 
-                mode: ['avoid-all', 'css', 'legacy'],
-                before: '.resume-section',
-                after: '.experience-entry'
-            }
-        };
-        
-        html2pdf()
-            .set(opt)
-            .from(resumeContent)
-            .save()
-            .then(() => {
-                console.log('PDF generated successfully');
-                resumeContent.classList.remove('pdf-ready');
-            })
-            .catch((error) => {
-                console.error('html2pdf failed:', error);
-                resumeContent.classList.remove('pdf-ready');
-                exportWithJsPDF();
-            });
-    } else {
-        console.log('html2pdf not available, using jsPDF fallback');
-        exportWithJsPDF();
+    if (!userConfirmed) {
+        return;
     }
+    
+    // Prepare for printing
+    prepareForPrint();
+    
+    // Use a small delay to ensure styles are applied
+    setTimeout(() => {
+        // Trigger the browser's print dialog
+        window.print();
+        
+        // Clean up after print dialog closes (user action)
+        setTimeout(() => {
+            cleanupAfterPrint();
+        }, 1000);
+    }, 100);
+}
+
+function prepareForPrint() {
+    console.log('Preparing resume for print...');
+    
+    // Hide all non-resume content
+    const elementsToHide = [
+        '.header',
+        '.step-container',
+        '.resume-actions',
+        '.footer',
+        'nav',
+        'aside'
+    ];
+    
+    elementsToHide.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+            el.style.setProperty('display', 'none', 'important');
+        });
+    });
+    
+    // Show only the resume content
+    const resumeOutput = document.getElementById('resumeOutput');
+    if (resumeOutput) {
+        resumeOutput.style.setProperty('display', 'block', 'important');
+        resumeOutput.style.setProperty('margin', '0', 'important');
+        resumeOutput.style.setProperty('padding', '0', 'important');
+    }
+    
+    const resumeContent = document.getElementById('resumeContent');
+    if (resumeContent) {
+        resumeContent.classList.add('print-ready');
+    }
+    
+    // Adjust body for printing
+    document.body.style.setProperty('margin', '0', 'important');
+    document.body.style.setProperty('padding', '0', 'important');
+    document.body.style.setProperty('background', 'white', 'important');
+}
+
+function cleanupAfterPrint() {
+    console.log('Cleaning up after print...');
+    
+    // Restore all hidden elements
+    const elementsToShow = [
+        '.header',
+        '.step-container',
+        '.resume-actions',
+        '.footer',
+        'nav',
+        'aside'
+    ];
+    
+    elementsToShow.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+            el.style.removeProperty('display');
+        });
+    });
+    
+    // Restore resume output styles
+    const resumeOutput = document.getElementById('resumeOutput');
+    if (resumeOutput) {
+        resumeOutput.style.removeProperty('margin');
+        resumeOutput.style.removeProperty('padding');
+    }
+    
+    const resumeContent = document.getElementById('resumeContent');
+    if (resumeContent) {
+        resumeContent.classList.remove('print-ready');
+    }
+    
+    // Restore body styles
+    document.body.style.removeProperty('margin');
+    document.body.style.removeProperty('padding');
+    document.body.style.removeProperty('background');
 }
 
 function exportWithJsPDF() {
@@ -669,58 +716,31 @@ function autoFillTestData() {
     alert('Test data has been filled in all forms. You can now proceed through the steps or make modifications as needed.');
 }
 
+// Ensure the function is available globally for onclick attributes (must be outside event listeners)
+window.autoFillTestData = autoFillTestData;
+window.analyzeJobDescription = analyzeJobDescription;
+window.skipAnalysis = skipAnalysis;
+window.showResumeTextInput = showResumeTextInput;
+window.hideResumeTextInput = hideResumeTextInput;
+window.triggerFileUpload = triggerFileUpload;
+window.skipResumeImport = skipResumeImport;
+window.parseExistingResume = parseExistingResume;
+window.nextStep = nextStep;
+window.addExperience = addExperience;
+window.clearExperienceFields = clearExperienceFields;
+window.generateResume = generateResume;
+window.downloadResume = downloadResume;
+window.copyToClipboard = copyToClipboard;
+window.startOver = startOver;
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded - Resume Builder ready');
     
-    // Add auto-fill button to step 1
-    setTimeout(() => {
-        const step1 = document.getElementById('step1');
-        if (step1) {
-            const buttonGroup = step1.querySelector('.button-group');
-            if (buttonGroup) {
-                // Create auto-fill test button
-                const autoFillBtn = document.createElement('button');
-                autoFillBtn.innerHTML = '<i class="fas fa-magic"></i> Auto-Fill Test Data';
-                autoFillBtn.className = 'btn-secondary';
-                autoFillBtn.onclick = autoFillTestData;
-                autoFillBtn.style.backgroundColor = '#28a745';
-                autoFillBtn.style.color = 'white';
-                autoFillBtn.title = 'Fills all forms with sample data for testing';
-                
-                // Add the button to the button group
-                buttonGroup.appendChild(autoFillBtn);
-                console.log('Auto-fill test button added to step 1');
-            }
-        }
-    }, 500);
-    
-    // Debug: Check if buttons are present
-    setTimeout(() => {
-        const step1 = document.getElementById('step1');
-        if (step1) {
-            console.log('Step 1 container found');
-            const buttonGroup = step1.querySelector('.button-group');
-            if (buttonGroup) {
-                console.log('Button group found');
-                const buttons = buttonGroup.querySelectorAll('button');
-                console.log('Step 1 buttons found:', buttons.length);
-                buttons.forEach((btn, index) => {
-                    console.log(`Button ${index + 1}:`, btn.textContent.trim());
-                    console.log(`Button ${index + 1} onclick:`, btn.getAttribute('onclick'));
-                    console.log(`Button ${index + 1} styles:`, window.getComputedStyle(btn).display);
-                });
-            } else {
-                console.log('Button group NOT found');
-            }
-        } else {
-            console.log('Step 1 container NOT found');
-        }
-        
-        // Test if functions are accessible
-        console.log('analyzeJobDescription function:', typeof window.analyzeJobDescription);
-        console.log('skipAnalysis function:', typeof window.skipAnalysis);
-    }, 1000);
+    // Debug: Check if functions are accessible
+    console.log('autoFillTestData function:', typeof window.autoFillTestData);
+    console.log('analyzeJobDescription function:', typeof window.analyzeJobDescription);
+    console.log('skipAnalysis function:', typeof window.skipAnalysis);
     
     // Set up file upload handler
     const fileInput = document.getElementById('resumeFile');
@@ -1831,10 +1851,10 @@ function showSuccessMessage(message) {
 function downloadResume() {
     console.log('Download Resume button clicked');
     
-    // Show loading indicator
+    // Show loading indicator briefly
     const downloadBtn = document.querySelector('.resume-actions .btn-primary');
     const originalText = downloadBtn.innerHTML;
-    downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+    downloadBtn.innerHTML = '<i class="fas fa-print"></i> Opening Print Dialog...';
     downloadBtn.disabled = true;
     
     // Small delay to show loading state
@@ -1846,7 +1866,7 @@ function downloadResume() {
             setTimeout(() => {
                 downloadBtn.innerHTML = originalText;
                 downloadBtn.disabled = false;
-            }, 2000);
+            }, 1500);
         }
     }, 100);
 }
